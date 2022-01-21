@@ -45,6 +45,7 @@ urlpatterns = [
     path('gettoken/', CustomAuthToken.as_view()),
 
     path('a', views.a, name='a'),
+    path('Product_pd_view', views.Product_view, name='Product_pd_view'),
 ]
 
 
