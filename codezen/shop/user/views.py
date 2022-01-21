@@ -199,3 +199,17 @@ def CustomerOrdersList_view(request):
         serializer = OrdersSerializer(data, many=True)
         return Response(serializer.data)
 
+
+
+import pandas as pd
+from django.conf import settings
+def Product_view(request):
+    df1 = pd.read_csv(f"{settings.BASE_DIR}/user/excel/Product_data.xlsx", encoding = 'unicode_escape', on_bad_lines='skip')
+    print(df1.values.tolist())
+
+    item= Product.objects.all().values()
+    df = pd.DataFrame(item)
+    data_dict={
+        'df':df.to_html()
+    }
+    return render(request, 'pandas_data.html',context=data_dict )
