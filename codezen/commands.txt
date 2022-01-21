@@ -1,0 +1,27 @@
+sudo apt install python3
+sudo apt install python3-pip
+sudo apt-get install python3-venv
+python3 -m venv ./my_venv
+source my_venv/bin/activate 
+
+django
+pip install django
+django-admin startproject my_project
+python manage.py runserver
+python manage.py makemigrations
+python manage.py migrate
+python manage.py runserver
+
+Deactivating virtual environment
+deactivate
+
+To create requirements.txt
+pip3 freeze > requirements.txt
+
+To create user token
+python manage.py drf_create_token <username>
+
+pip install httpie
+http POST http://127.0.0.1:8000/gettoken/ username="rahul" password="aniketaniket"
+
+[{"key":"Authorization","value":"token e7cfbedf54aadb18d5cb02196660843b951ef32c","description":"","type":"default","enabled":true}]
