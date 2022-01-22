@@ -1,23 +1,32 @@
+from __future__ import absolute_import, unicode_literals
 import os
+
 from celery import Celery
-# Set the default Django settings module for the 'celery' program.
+from django.conf import settings
+from celery.schedules import crontab
+
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'celeryProduct.settings')
 
 app = Celery('celeryProduct')
+app.conf.enable_utc = False
 
-# Using a string here means the worker doesn't have to serialize
-# the configuration object to child processes.
-# - namespace='CELERY' means all celery-related configuration keys
-#   should have a `CELERY_` prefix.
-app.config_from_object('django.conf:settings', namespace='CELERY')
+app.conf.update(timezone = 'Asia/Kolkata')
 
-# Load task modules from all registered Django apps.
+app.config_from_object(settings, namespace='CELERY')
+
+
 app.autodiscover_tasks()
 
+# Celery Beat Settings
+app.conf.beat_schedule = {
+    'testing_task': {
+        'task': 'csvToModel.tasks.add',
+        'schedule':crontab(minute=30, hour=14, day_of_week='*',day_of_month="*"),
+    },
+    
+}
 
-@app.task(bind=True)
-def debug_task(self):
-    print(f'Request: {self.request!r}')
+app.conf.timezone = 'Asia/Kolkata' 
 
 
-# celery -A celeryProduct worker -l info --pool=solo
+# celery -A celeryProduct worker -B
