@@ -26,6 +26,6 @@ class Orders(models.Model):
 class PlatformApiCall(models.Model):
     user = models.ForeignKey(User,on_delete=CASCADE,related_name='PlatformApiCall')
     requested_url = models.CharField(max_length=500,null=True)
-    requested_data = models.CharField(max_length=500,null=True)
-    response_data = models.CharField(max_length=500,null=True)
+    requested_data = models.CharField(max_length=50000,null=True)
+    response_data = models.CharField(max_length=50000,null=True)
 

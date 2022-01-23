@@ -9,9 +9,6 @@ from rest_framework.decorators import api_view,authentication_classes,permission
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated,AllowAny,IsAdminUser,IsAuthenticatedOrReadOnly,DjangoModelPermissions,DjangoModelPermissionsOrAnonReadOnly
 
-def a(request):
-    current_user = request.user
-    return HttpResponse(current_user.id)
 
 
 from rest_framework.authtoken.views import ObtainAuthToken
@@ -31,6 +28,12 @@ class CustomAuthToken(ObtainAuthToken):
             'user_id': user.pk,
             'email': user.email
         })
+
+class PlateformAPIMixin:
+    def post_request(user,requested_url,requested_data,response_data):
+        print(user,requested_url,requested_data,response_data)
+        PlatformApiCall.objects.create(user=user,requested_url=requested_url,requested_data=requested_data,response_data=response_data)
+        return Response("Data save successfull")
 
 
 #Product CRUD application
@@ -95,16 +98,26 @@ from rest_framework.response import Response
 from rest_framework import status
 
 
-class OrdersList(APIView):
+class OrdersList(PlateformAPIMixin, APIView):
     def get(self, request, format=None):
         data = Orders.objects.all()
         serializer = OrdersSerializer(data, many=True)
+        user = User.objects.get(id=request.user.id)
+        requested_url = 'http://127.0.0.1:8000/OrdersListAPI'
+        request_data = 'GET'
+        responce_data = serializer.data
+        PlateformAPIMixin.post_request(user,requested_url,request_data,responce_data)
         return Response(serializer.data)
 
     def post(self, request, format=None):
         serializer = OrdersSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
+            user = User.objects.get(id=request.user.id)
+            requested_url = 'http://127.0.0.1:8000/OrdersListAPI'
+            request_data = 'POST',request.data
+            responce_data = serializer.data
+            PlateformAPIMixin.post_request(user,requested_url,request_data,responce_data)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -118,6 +131,11 @@ class OrdersDetail(APIView):
     def get(self, request, pk, format=None):
         data = self.get_object(pk)
         serializer = OrdersSerializer(data)
+        user = User.objects.get(id=request.user.id)
+        requested_url = 'http://127.0.0.1:8000/OrdersListAPI/'+str(pk)+'/'
+        request_data = 'GET'
+        responce_data = serializer.data
+        PlateformAPIMixin.post_request(user,requested_url,request_data,responce_data)
         return Response(serializer.data)
 
     def put(self, request, pk, format=None):
@@ -125,12 +143,22 @@ class OrdersDetail(APIView):
         serializer = OrdersSerializer(data, data=request.data)
         if serializer.is_valid():
             serializer.save()
+            user = User.objects.get(id=request.user.id)
+            requested_url = 'http://127.0.0.1:8000/OrdersListAPI/'+str(pk)+'/'
+            request_data = 'PUT',request.data
+            responce_data = serializer.data
+            PlateformAPIMixin.post_request(user,requested_url,request_data,responce_data)
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk, format=None):
         Orders = self.get_object(pk)
         Orders.delete()
+        user = User.objects.get(id=request.user.id)
+        requested_url = 'http://127.0.0.1:8000/OrdersListAPI/'+str(pk)+'/'
+        request_data = 'DELETE'
+        responce_data = "Order deleted successfully"
+        PlateformAPIMixin.post_request(user,requested_url,request_data,responce_data)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 # Customer
@@ -201,15 +229,3 @@ def CustomerOrdersList_view(request):
 
 
 
-import pandas as pd
-from django.conf import settings
-def Product_view(request):
-    df1 = pd.read_csv(f"{settings.BASE_DIR}/user/excel/Product_data.xlsx", encoding = 'unicode_escape', on_bad_lines='skip')
-    print(df1.values.tolist())
-
-    item= Product.objects.all().values()
-    df = pd.DataFrame(item)
-    data_dict={
-        'df':df.to_html()
-    }
-    return render(request, 'pandas_data.html',context=data_dict )
