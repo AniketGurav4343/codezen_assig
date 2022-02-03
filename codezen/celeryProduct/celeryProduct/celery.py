@@ -20,8 +20,8 @@ app.autodiscover_tasks()
 # Celery Beat Settings
 app.conf.beat_schedule = {
     'testing_task': {
-        'task': 'csvToModel.tasks.add',
-        'schedule':crontab(minute=30, hour=14, day_of_week='*',day_of_month="*"),
+        'task': 'csvToModel.tasks.csvToModeldata',
+        'schedule':crontab(minute=32, hour=15, day_of_week='*',day_of_month="*"),
     },
     
 }

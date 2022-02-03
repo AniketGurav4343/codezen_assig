@@ -38,8 +38,8 @@ class PlateformAPIMixin:
 
 #Product CRUD application
 @api_view(['GET'])
-@authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
+# @authentication_classes([TokenAuthentication])
+# @permission_classes([IsAuthenticated])
 def ProductList_view(request):
     if request.method == 'GET':
         data = Product.objects.all()
@@ -113,11 +113,11 @@ class OrdersList(PlateformAPIMixin, APIView):
         serializer = OrdersSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            user = User.objects.get(id=request.user.id)
-            requested_url = 'http://127.0.0.1:8000/OrdersListAPI'
-            request_data = 'POST',request.data
-            responce_data = serializer.data
-            PlateformAPIMixin.post_request(user,requested_url,request_data,responce_data)
+            # user = User.objects.get(id=request.user.id)
+            # requested_url = 'http://127.0.0.1:8000/OrdersListAPI'
+            # request_data = 'POST',request.data
+            # responce_data = serializer.data
+            # PlateformAPIMixin.post_request(user,requested_url,request_data,responce_data)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
