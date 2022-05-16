@@ -50,19 +50,19 @@ class OTP(models.Model):
 
 
 
-class Roles(models.Model):
+# class Roles(models.Model):
    
-    role_name = models.SlugField(unique=True, max_length=255)
-    role_status = models.IntegerField()
-    created_at        = models.DateTimeField(auto_now_add=True, null=True)
-    updated_at        = models.DateTimeField(auto_now=True)
-    is_deleted        = models.BooleanField(blank=False, null=False, default=False)
+#     role_name = models.SlugField(unique=True, max_length=255)
+#     role_status = models.IntegerField()
+#     created_at        = models.DateTimeField(auto_now_add=True, null=True)
+#     updated_at        = models.DateTimeField(auto_now=True)
+#     is_deleted        = models.BooleanField(blank=False, null=False, default=False)
     
-    class Meta:
-        verbose_name_plural = "System Roles"
+#     class Meta:
+#         verbose_name_plural = "System Roles"
 
-    def __str__(self):
-        return "{}-{}".format(self.pk, self.role_name)
+#     def __str__(self):
+#         return "{}-{}".format(self.pk, self.role_name)
 
 
 
@@ -82,48 +82,48 @@ class FirmType(models.Model):
 
 
 
-class State(models.Model):
-    name = models.CharField(max_length=255,blank=False,null=False)
-    abbreviation = models.CharField(max_length=2, blank=True,null=True)
-    created_at        = models.DateTimeField(auto_now_add=True, null=True)
-    updated_at        = models.DateTimeField(auto_now=True)
-    is_deleted        = models.BooleanField(blank=False, null=False, default=False)
+# class State(models.Model):
+#     name = models.CharField(max_length=255,blank=False,null=False)
+#     abbreviation = models.CharField(max_length=2, blank=True,null=True)
+#     created_at        = models.DateTimeField(auto_now_add=True, null=True)
+#     updated_at        = models.DateTimeField(auto_now=True)
+#     is_deleted        = models.BooleanField(blank=False, null=False, default=False)
 
-    class Meta:
-        verbose_name_plural = "States"
+#     class Meta:
+#         verbose_name_plural = "States"
     
-    def __str__(self):
-        return "{} - {} - {}".format(self.pk,self.name,self.abbreviation)
+#     def __str__(self):
+#         return "{} - {} - {}".format(self.pk,self.name,self.abbreviation)
 
 
 
-class City(models.Model):
-    name = models.CharField(max_length=255,blank=False,null=False)
-    created_at        = models.DateTimeField(auto_now_add=True, null=True)
-    updated_at        = models.DateTimeField(auto_now=True)
-    is_deleted        = models.BooleanField(blank=False, null=False, default=False)
+# class City(models.Model):
+#     name = models.CharField(max_length=255,blank=False,null=False)
+#     created_at        = models.DateTimeField(auto_now_add=True, null=True)
+#     updated_at        = models.DateTimeField(auto_now=True)
+#     is_deleted        = models.BooleanField(blank=False, null=False, default=False)
 
-    class Meta:
-        verbose_name_plural = "Cities"
+#     class Meta:
+#         verbose_name_plural = "Cities"
     
-    def __str__(self):
-        return "{} - {}".format(self.pk,self.name)
+#     def __str__(self):
+#         return "{} - {}".format(self.pk,self.name)
 
 
 
-class PincodeMaster(models.Model):
+# class PincodeMaster(models.Model):
 
-    pincode = models.IntegerField(null=False, blank=False)
-    is_deleted = models.BooleanField(blank=False, null=False, default=False)
-    created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    is_deleted        = models.BooleanField(blank=False, null=False, default=False)
+#     pincode = models.IntegerField(null=False, blank=False)
+#     is_deleted = models.BooleanField(blank=False, null=False, default=False)
+#     created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+#     updated_at = models.DateTimeField(auto_now=True)
+#     is_deleted        = models.BooleanField(blank=False, null=False, default=False)
 
-    def __str__(self):
-        return '{}-{}'.format(self.pk,self.pincode)
+#     def __str__(self):
+#         return '{}-{}'.format(self.pk,self.pincode)
 
-    class Meta:
-        verbose_name_plural = "PincodeMaster"
+#     class Meta:
+#         verbose_name_plural = "PincodeMaster"
 
 
 
