@@ -1,6 +1,12 @@
 import datetime
 import random
+import binascii
+import os
 from django.db import models
+from django.contrib.auth.models import User
+from six import python_2_unicode_compatible
+from django.utils.translation import gettext_lazy as _
+import rest_framework.authtoken.models
 from django.contrib.auth.models import User as AuthUser
 
 
@@ -27,6 +33,31 @@ class PlatformApiCall(models.Model):
 
 
 
+@python_2_unicode_compatible
+class Token(rest_framework.authtoken.models.Token):
+    # key is no longer primary key, but still indexed and unique
+    key  = models.CharField(_("Key"), max_length=40, blank=True, db_index=True, unique=True)
+    # relation to user is a ForeignKey, so each user can have more than one token
+    user = models.ForeignKey(User, related_name='auth_tokens', on_delete=models.CASCADE, verbose_name=_("User"))
+    name = models.CharField(_("Name"), max_length=64, blank=True, null=True)    
+    created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)    
+    # If you have multiple tokens, you might want to have a way to manage them. That usually means referring to tokens by a URL. As the key is supposed to be secret, it should not appear in URLs, because URLs usually end up in a kind of places, e.g. server logs.
+    # Tokens now have a name to be able to differentiate them. The name should be unique per user    
+     
+    def save(self, *args, **kwargs):
+        if not self.key:
+            self.key = self.generate_key()
+        return super(Token, self).save(*args, **kwargs)  
+
+    def generate_key(self):
+        return binascii.hexlify(os.urandom(20)).decode()    
+
+    class Meta:
+        # unique_together = (('user', 'name'),)
+        verbose_name_plural = 'Tokens'
+        db_table            = 'rest_framework_authtoken_model_token'
+
+
 class OTP(models.Model):
 
     otp = models.CharField(max_length=100,unique=True, null=False, blank=False)
@@ -50,19 +81,19 @@ class OTP(models.Model):
 
 
 
-# class Roles(models.Model):
+class Roles(models.Model):
    
-#     role_name = models.SlugField(unique=True, max_length=255)
-#     role_status = models.IntegerField()
-#     created_at        = models.DateTimeField(auto_now_add=True, null=True)
-#     updated_at        = models.DateTimeField(auto_now=True)
-#     is_deleted        = models.BooleanField(blank=False, null=False, default=False)
+    role_name = models.SlugField(unique=True, max_length=255)
+    role_status = models.IntegerField()
+    created_at        = models.DateTimeField(auto_now_add=True, null=True)
+    updated_at        = models.DateTimeField(auto_now=True)
+    is_deleted        = models.BooleanField(blank=False, null=False, default=False)
     
-#     class Meta:
-#         verbose_name_plural = "System Roles"
+    class Meta:
+        verbose_name_plural = "System Roles"
 
-#     def __str__(self):
-#         return "{}-{}".format(self.pk, self.role_name)
+    def __str__(self):
+        return "{}-{}".format(self.pk, self.role_name)
 
 
 
@@ -81,6 +112,15 @@ class FirmType(models.Model):
         return "{} - {}".format(self.pk,self.firm_type)
 
 
+
+class AttemptsChecker(models.Model):
+
+    otp = models.ForeignKey(OTP, on_delete=models.CASCADE,null=True, blank=True)
+    attempts_left = models.CharField(max_length=4, null=True, blank=True, default=3)
+    retry_after_timestamp = models.DateTimeField(auto_now_add=False, blank=True, null=True)
+    is_success = models.IntegerField(null=False, blank=False, default=0)
+    created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
 # class State(models.Model):
 #     name = models.CharField(max_length=255,blank=False,null=False)
