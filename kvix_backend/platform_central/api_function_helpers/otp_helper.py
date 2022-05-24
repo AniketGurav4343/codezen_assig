@@ -26,99 +26,107 @@ from platform_central.api_function_helpers.sms_helper import *
 from internal_admin.models import User
 from django.contrib.auth.models import User
 from platform_central.models import Token as LogToken
-from miscellaneous.api_function_helpers.email_helper import send_emailer, otp_verification
+# from miscellaneous.api_function_helpers.email_helper impormodelst send_emailer, otp_verification
 from internal_admin.sub_serializer.auth_serializer import VerifySerializer
 
-from platform_central.models import OTP
+from platform_central. import OTP
 from datetime import timedelta
 from django.utils import timezone
 
 def send_otp(self, request, format=None):
-    """
-    Helper funtion to send OTP
-
-    """
-    serializer = self.serializer_class(data=request.data)
-
-    if serializer.is_valid():
-
-        user_mobile = request.data.get('mobile')
-        user_otp = OTP.objects.filter(mobile=user_mobile).last()
-
-        # otp logic 
-        if user_otp:
-            now = timezone.now()
-            duration = now - user_otp.created_at
-
-            if duration < timedelta(seconds=30):
-                return Response({
+    return Response({
                         'success': False,
                         'status_code': status.HTTP_200_OK,
-                        'message': "OTP Already Sent!, Please try again in 30 sec",
-                        'data':None},
+                        'message': "success",
+                        'data':'123456'},
                         status = status.HTTP_200_OK
                     )
+# def send_otp(self, request, format=None):
+#     """
+#     Helper funtion to send OTP
 
-        serializer.save()
+#     """
+#     serializer = self.serializer_class(data=request.data)
 
-        otp_code = serializer.data["otp"]
-        mobile = serializer.data["mobile"]
-        message_hash = serializer.data['message_hash']
+#     if serializer.is_valid():
 
-        if settings.SMS_SERVICE_STATUS:
+#         user_mobile = request.data.get('mobile')
+#         user_otp = OTP.objects.filter(mobile=user_mobile).last()
 
-            # Email And Message Body
-            # message = "{} is the one time password (OTP) for your mobile number verification with FatakPay. Kindly note that the OTP is valid only for 30 minutes. Please do not share this OTP with anyone for security reasons.- FatakPay".format(otp_code) 
+#         # otp logic 
+#         if user_otp:
+#             now = timezone.now()
+#             duration = now - user_otp.created_at
 
-            message = "{} is the one time password (OTP) for your mobile number verification with FatakPay. Kindly note that the OTP is valid only for 30 minutes. Please do not share this OTP with anyone for security reasons.- FatakPay #{}".format(otp_code, message_hash)
+#             if duration < timedelta(seconds=30):
+#                 return Response({
+#                         'success': False,
+#                         'status_code': status.HTTP_200_OK,
+#                         'message': "OTP Already Sent!, Please try again in 30 sec",
+#                         'data':None},
+#                         status = status.HTTP_200_OK
+#                     )
 
-            # r = sendGupShupSMS(message, mobile)
+#         serializer.save()
 
-            # if r.status_code == 200:
+#         otp_code = serializer.data["otp"]
+#         mobile = serializer.data["mobile"]
+#         message_hash = serializer.data['message_hash']
 
-                # return Response({
-                #     'success': True,
-                #     'status_code': status.HTTP_200_OK,
-                #     'message': messages.OTP_SENT,
-                #     'data':None},
-                #     status = status.HTTP_200_OK
-                # )
-            # else:
-            return Response({
-                'success': False,
-                'status_code': status.HTTP_200_OK,
-                'message': messages.MESSAGE_SERVICE_DOWN,
-                'data':None},
-                status = status.HTTP_200_OK
-            )
-        else:
-            if "email_notify" in request.data and request.data["email_notify"]=="yes":
+#         if settings.SMS_SERVICE_STATUS:
 
-                email_body  = "Hi, Your OTP for is {}".format(otp_code)
+#             # Email And Message Body
+#             # message = "{} is the one time password (OTP) for your mobile number verification with FatakPay. Kindly note that the OTP is valid only for 30 minutes. Please do not share this OTP with anyone for security reasons.- FatakPay".format(otp_code) 
+
+#             message = "{} is the one time password (OTP) for your mobile number verification with FatakPay. Kindly note that the OTP is valid only for 30 minutes. Please do not share this OTP with anyone for security reasons.- FatakPay #{}".format(otp_code, message_hash)
+
+#             # r = sendGupShupSMS(message, mobile)
+
+#             # if r.status_code == 200:
+
+#                 # return Response({
+#                 #     'success': True,
+#                 #     'status_code': status.HTTP_200_OK,
+#                 #     'message': messages.OTP_SENT,
+#                 #     'data':None},
+#                 #     status = status.HTTP_200_OK
+#                 # )
+#             # else:
+#             return Response({
+#                 'success': False,
+#                 'status_code': status.HTTP_200_OK,
+#                 'message': messages.MESSAGE_SERVICE_DOWN,
+#                 'data':None},
+#                 status = status.HTTP_200_OK
+#             )
+#         else:
+#             if "email_notify" in request.data and request.data["email_notify"]=="yes":
+
+#                 email_body  = "Hi, Your OTP foOTPr is {}".format(otp_code)
                 
 
-                request.data["body_text"] = email_body
-                request.data["recipient"] = request.data["email"]
-                request.data["subject"] = "OTP"
+#                 request.data["body_text"] = email_body
+#                 request.data["recipient"] = request.data["email"]
+#                 request.data["subject"] = "OTP"
                     
 
-                send_emailer(self, request)
+#                 send_emailer(self, request)
 
-            return Response({
-                'success': True,
-                'status_code': status.HTTP_200_OK,
-                'message': messages.DUMMY_OTP,
-                'data':None},
-                status = status.HTTP_200_OK
-            )
+#             return Response({
+#                 'success': True,
+#                 'status_code': status.HTTP_200_OK,
+#                 'message': messages.DUMMY_OTP,
+#                 'data':None},
+#                 status = status.HTTP_200_OK
+#             )
         
-    else:
-        return Response({
-                'success': False,
-                'status_code': status.HTTP_400_BAD_REQUEST,
-                'message': handle_errors(serializer.errors),
-                'data':None},
-                status = status.HTTP_400_BAD_REQUEST)
+#     else:
+#         return Response({
+#                 'success': False,
+#                 'status_code': status.HTTP_400_BAD_REQUEST,
+#                 'message': handle_errors(serializer.errors),
+#                 'data':None},
+#                 status = status.HTTP_400_BAD_REQUEST)
 
 
 
@@ -308,7 +316,7 @@ def validate_otp(self, request, format=None):
 
                 # response = {}
 
-                validate_request(self, request)
+                # validate_request(self, request)
 
                 user = AppUser.objects.filter(
                     mobile=serializer.validated_data["mobile"]).order_by(
