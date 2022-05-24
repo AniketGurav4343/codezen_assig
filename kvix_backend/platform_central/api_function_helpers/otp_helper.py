@@ -29,7 +29,7 @@ from platform_central.models import Token as LogToken
 # from miscellaneous.api_function_helpers.email_helper impormodelst send_emailer, otp_verification
 from internal_admin.sub_serializer.auth_serializer import VerifySerializer
 
-from platform_central. import OTP
+from platform_central.models import OTP
 from datetime import timedelta
 from django.utils import timezone
 
