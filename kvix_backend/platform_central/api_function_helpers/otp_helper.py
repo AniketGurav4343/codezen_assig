@@ -37,7 +37,7 @@ def send_otp(self, request, format=None):
                             'success': False,
                             'status_code': status.HTTP_200_OK,
                             'message': "success",
-                            'data':'123456'},
+                            'data':user_otp},
                             status = status.HTTP_200_OK
                         )
                         
