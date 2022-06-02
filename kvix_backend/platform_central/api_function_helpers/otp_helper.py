@@ -4,7 +4,7 @@ from django.utils import timezone
 from datetime import timedelta
 from rest_framework.response import Response
 from platform_central.models import *
-from common.messages import *
+from common import messages 
 
 def send_otp(self, request, format=None):
     """
@@ -65,7 +65,7 @@ def validate_otp(self, request, format=None):
                     return Response({
                     'success': False,
                     'status_code': status.HTTP_200_OK,
-                    'message': OTP_NOT_FOUND,
+                    'message': messages.OTP_NOT_FOUND,
                     'data':None},
                     status = status.HTTP_200_OK)
             else:
@@ -79,7 +79,7 @@ def validate_otp(self, request, format=None):
                             return Response({
                                 'success': False,
                                 'status_code': status.HTTP_200_OK,
-                                'message': OTP_EXPIRED,
+                                'message': messages.OTP_EXPIRED,
                                 'data':None},
                                 status = status.HTTP_200_OK)    
                     else:
@@ -96,7 +96,7 @@ def validate_otp(self, request, format=None):
                                 return Response({
                                 'success': False,
                                 'status_code': status.HTTP_400_BAD_REQUEST,
-                                'message': ATTEMPTS_EXHAUSTED,
+                                'message': messages.ATTEMPTS_EXHAUSTED,
                                 'data':None},
                                 status = status.HTTP_400_BAD_REQUEST)
 
@@ -123,7 +123,7 @@ def validate_otp(self, request, format=None):
                         return Response({
                             'success': False,
                             'status_code': status.HTTP_400_BAD_REQUEST,
-                            'message': INVALID_OTP,
+                            'message': messages.INVALID_OTP,
                             'data':None},
                             status = status.HTTP_400_BAD_REQUEST)
                         
@@ -164,7 +164,7 @@ def validate_otp(self, request, format=None):
                                 return Response({
                                     'success': False,
                                     'status_code': status.HTTP_400_BAD_REQUEST,
-                                    'message': ATTEMPTS_EXHAUSTED_RETRY,
+                                    'message': messages.ATTEMPTS_EXHAUSTED_RETRY,
                                     'data':None},
                                     status = status.HTTP_400_BAD_REQUEST)
 
@@ -180,7 +180,7 @@ def validate_otp(self, request, format=None):
                                 return Response({
                                     'success': False,
                                     'status_code': status.HTTP_400_BAD_REQUEST,
-                                    'message': ATTEMPTS_EXHAUSTED,
+                                    'message': messages.ATTEMPTS_EXHAUSTED,
                                     'data':None},
                                     status = status.HTTP_400_BAD_REQUEST)
 
@@ -204,7 +204,7 @@ def validate_otp(self, request, format=None):
                         return Response({
                             'success': False,
                             'status_code': status.HTTP_400_BAD_REQUEST,
-                            'message': INVALID_OTP.format(obj.attempts_left),
+                            'message': messages.INVALID_OTP.format(obj.attempts_left),
                             'data':None},
                             status = status.HTTP_400_BAD_REQUEST)
 
@@ -319,7 +319,7 @@ def validate_otp(self, request, format=None):
                 return Response({
                     'success': True,
                     'status_code': status.HTTP_200_OK,
-                    'message': OTP_VERIFIED,
+                    'message': messages.OTP_VERIFIED,
                     'data':data},
                     status = status.HTTP_200_OK
                 )
@@ -327,7 +327,7 @@ def validate_otp(self, request, format=None):
             return Response({
                 'success': False,
                 'status_code': status.HTTP_400_BAD_REQUEST,
-                'message': OTP_NOT_FOUND_ERROR,
+                'message': messages.OTP_NOT_FOUND_ERROR,
                 'data':None},
                 status = status.HTTP_400_BAD_REQUEST)
         
