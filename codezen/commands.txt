@@ -25,3 +25,8 @@ pip install httpie
 http POST http://127.0.0.1:8000/gettoken/ username="rahul" password="aniketaniket"
 
 [{"key":"Authorization","value":"token e7cfbedf54aadb18d5cb02196660843b951ef32c","description":"","type":"default","enabled":true}]
+
+
+sudo apt install rabbitmq-server
+celery -A app_name beat -l info --scheduler django_celery_beat.schedulers.DatabaseScheduler
+celery -A app_name worker -l info

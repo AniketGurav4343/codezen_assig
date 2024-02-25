@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 
 from pathlib import Path
 import os
+from celery.schedules import crontab
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -133,18 +134,38 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # CELERY SETTINGS
 
-CELERY_BROKER_URL='redis://127.0.0.1:6379'
-CELERY_RESULT_BACKEND='redis://127.0.0.1:6379'
-CELERY_ACCEPT_CONTENT = ['application/json']
-CELERY_RESULT_SERIALIZER='json'
-CELERY_TASK_SERIALIZER='json'
-CELERY_TIMEZONE='Asia/Kolkata'
+# CELERY_BROKER_URL='redis://127.0.0.1:6379'
+# CELERY_RESULT_BACKEND='redis://127.0.0.1:6379'
+# CELERY_ACCEPT_CONTENT = ['application/json']
+# CELERY_RESULT_SERIALIZER='json'
+# CELERY_TASK_SERIALIZER='json'
+# CELERY_TIMEZONE='Asia/Kolkata'
 
+
+# CELERY_RESULT_BACKEND = 'django-db'
+
+# #CELERY BEAT
+# CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
+
+# #CELERY BEAT
+# CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
+
+
+CELERY_BROKER_URL = 'amqp://localhost'
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
 
 CELERY_RESULT_BACKEND = 'django-db'
+CELERY_RESULT_EXPIRES = None
 
-#CELERY BEAT
-CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
+CELERY_TIMEZONE = 'UTC'
+CELERY_ENABLE_UTC = False
 
-#CELERY BEAT
-CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
+from datetime import timedelta
+
+CELERY_BEAT_SCHEDULE = {
+    "backend_cleanup": {
+        "task": "celery.backend_cleanup",
+        "schedule": timedelta(days=365*1000), #crontab(minute="*/1"),
+        "relative": True,
+    },
+}
